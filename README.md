@@ -1,24 +1,59 @@
 # Détection de la fraude financière
 
-## 1. Présentation du projet
+Ce projet analyse les transactions financières et construit des modèles de Machine Learning pour détecter les opérations frauduleuses.
 
-Ce projet consiste à analyser des transactions financières et à détecter les opérations frauduleuses à l'aide du Machine Learning.
+---
 
-L'objectif est d'identifier les transactions frauduleuses à partir de plusieurs informations, comme le montant, le type de transaction et les soldes des comptes avant et après chaque opération.
+## 1. Situation
 
-Le jeu de données contient **6 362 620 transactions** et **11 variables**.
+Une entreprise financière traite des millions de transactions. Parmi elles, certaines sont frauduleuses et peuvent entraîner des pertes financières.
 
-Chaque ligne représente une transaction financière entre un compte d'origine et, selon le type d'opération, un compte de destination.
+Nous disposons d'un jeu de données contenant **6 362 620 transactions** et **11 variables**.
 
-La principale question étudiée est :
+Chaque transaction contient plusieurs informations :
 
-> **Quelles caractéristiques permettent d'identifier une transaction financière frauduleuse ?**
+- le type de transaction
+- le montant
+- le solde du compte avant et après l'opération
+- les informations sur le compte d'origine et le compte de destination
+- le statut de la transaction (frauduleuse ou légitime).
 
-## 2. Présentation du jeu de données
+Le problème : il est difficile d'identifier automatiquement les transactions frauduleuses parmi un très grand nombre de transactions légitimes.
 
-Deux modèles de classification ont été utilisés : la régression logistique et Random Forest (Forêt aléatoire).
+---
 
-Les données ont été réparties en trois ensembles :
+## 2. Tâche
+
+Mon travail avait deux buts :
+
+1. **Comprendre** les caractéristiques des transactions frauduleuses.
+2. **Prédire** si une nouvelle transaction est frauduleuse ou légitime à l'aide d'un modèle de classification.
+
+Pour savoir si les modèles sont performants, je mesure leurs résultats avec quatre indicateurs : **Accuracy, Precision, Recall et F1-score**.
+
+---
+
+## 3. Action
+
+Voici ce que j'ai fait, étape par étape.
+
+### a) Explorer les données (EDA)
+
+- J'examine la structure du jeu de données et les types de variables.
+- J'analyse la répartition des transactions selon leur type.
+- J'étudie les montants des transactions.
+- Je compare les transactions frauduleuses et légitimes.
+- J'analyse les soldes des comptes avant et après chaque opération.
+- J'identifie le déséquilibre entre les deux classes.
+
+### b) Préparer les données
+
+- Je transforme les variables catégorielles en variables numériques (encodage).
+- Je crée de nouvelles variables à partir des changements de soldes.
+- Je prépare les variables utilisées pour l'entraînement.
+- Je répartis les données en trois ensembles : entraînement, validation et test.
+
+Les données ont été réparties comme suit :
 
 | Ensemble      | Nombre de transactions |
 | ------------- | ---------------------: |
@@ -35,20 +70,35 @@ Les variables utilisées sont :
 - **Types de transactions :** `type_CASH_OUT`, `type_DEBIT`, `type_PAYMENT`, `type_TRANSFER`.
 - **Variables calculées :** `balance_change_orig`, `balance_error_orig`, `balance_change_dest`, `balance_error_dest`.
 
-## 3. Résultats des modèles
+### c) Entraîner plusieurs modèles
 
-### 	3.1. Régression logistique (modèle de référence)
+J'ai testé deux modèles de classification :
 
-La régression logistique a été utilisée comme premier modèle pour avoir une référence et comparer ses résultats avec ceux de Random Forest.
+- **Régression logistique :** utilisée comme modèle de référence.
+- **Random Forest (Forêt aléatoire) :** utilisée pour améliorer la détection des transactions frauduleuses.
+
+### d) Prédire et vérifier
+
+- Je prédis si chaque transaction est frauduleuse ou légitime.
+- Je compare les prédictions avec les valeurs réelles.
+- Je mesure les performances avec Accuracy, Precision, Recall et F1-score.
+- J'utilise une matrice de confusion pour observer les fraudes détectées, les fraudes manquées et les fausses alertes.
+
+---
+
+## 4. Résultat
+
+### 4.1. Régression logistique (modèle de référence)
 
 **Résultats obtenus :**
 
-- Accuracy : 99,87 %
+- Accuracy : **99,87 %**
 
-| Classe                    | Précision | Rappel | F1-score |
-| ------------------------- | ---------: | -----: | -------: |
-| Transactions légitimes   |       1,00 |   1,00 |     1,00 |
-| Transactions frauduleuses |       0,84 |   0,70 |     0,76 |
+| Mesure    | Transactions légitimes | Transactions frauduleuses |
+| --------- | ----------------------: | ------------------------: |
+| Precision |                    1,00 |                      0,84 |
+| Recall    |                    1,00 |                      0,70 |
+| F1-score  |                    1,00 |                      0,76 |
 
 **Matrice de confusion :**
 
@@ -59,24 +109,24 @@ La régression logistique a été utilisée comme premier modèle pour avoir une
 
 **Interprétation :**
 
-La régression logistique détecte correctement la majorité des transactions légitimes. Cependant, elle identifie seulement 70 % des transactions frauduleuses.
+La régression logistique classe correctement la majorité des transactions légitimes.
 
-Sur les 647 fraudes présentes dans cet ensemble, elle en détecte 64 et en manque 583.
+Cependant, elle détecte seulement **70 % des fraudes**. Sur les 647 transactions frauduleuses, elle en détecte 64 et en manque 583.
 
-### 	3.2. Random Forest (Forêt aléatoire)
+Cela montre que ce modèle a encore des difficultés à identifier les transactions frauduleuses.
 
-Le modèle Random Forest a ensuite été entraîné pour améliorer la détection des transactions frauduleuses.
+### 4.2. Random Forest (Forêt aléatoire)
 
-Les résultats ont été obtenus sur le jeu de validation avec un seuil de classification de **0,50**.
+Les résultats suivants ont été obtenus sur le jeu de validation avec un seuil de classification de **0,50**.
 
 **Résultats obtenus :**
 
-| Indicateur          |  Résultat |
-| ------------------- | ---------: |
-| Accuracy            | 99,99895 % |
-| Précision (Fraude) |    99,83 % |
-| Rappel (Fraude)     |   100,00 % |
-| F1-score (Fraude)   |    99,92 % |
+| Mesure             |     Valeur |
+| ------------------ | ---------: |
+| Accuracy           | 99,99895 % |
+| Precision (Fraude) |    99,83 % |
+| Recall (Fraude)    |   100,00 % |
+| F1-score (Fraude)  |    99,92 % |
 
 **Matrice de confusion :**
 
@@ -87,16 +137,18 @@ Les résultats ont été obtenus sur le jeu de validation avec un seuil de class
 
 **Interprétation :**
 
-Random Forest a obtenu de très bons résultats sur les données de validation.
+Random Forest obtient de très bons résultats sur le jeu de validation.
 
-Il a détecté les **1 180 transactions frauduleuses**, sans manquer aucune fraude. Il a également classé correctement 189 965 transactions légitimes, avec seulement 2 fausses alertes.
+Il détecte les **1 180 transactions frauduleuses**, sans en manquer aucune. Il classe également correctement 189 965 transactions légitimes, avec seulement 2 fausses alertes.
 
-### 4. Conclusion
+Le modèle améliore donc fortement la détection des fraudes par rapport à la régression logistique.
 
-La comparaison montre que Random Forest obtient de meilleurs résultats que la régression logistique pour détecter les fraudes.
+### Conclusion
 
-La régression logistique détecte 70 % des fraudes, tandis que Random Forest atteint 100 % sur le jeu de validation.
+La comparaison montre que Random Forest obtient de meilleurs résultats que la régression logistique pour détecter les transactions frauduleuses.
 
-Random Forest est donc le meilleur modèle parmi les deux modèles testés.
+La régression logistique détecte 70 % des fraudes, tandis que Random Forest atteint un rappel de 100 % sur le jeu de validation.
+
+**Random Forest est donc le meilleur modèle parmi les deux modèles testés.**
 
 Ces résultats restent à confirmer avec une évaluation finale sur le jeu de test pour vérifier les performances du modèle sur de nouvelles transactions.
