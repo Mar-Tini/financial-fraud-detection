@@ -1,0 +1,33 @@
+models:
+  logistic_regression:
+    name: LogisticRegression
+    C: 1.0
+    max_iter: 5000
+    solver: lbfgs
+    random_state: 42
+    class_weight: balanced 
+  random_forest: 
+    name: RandomForestClassifier
+    n_estimators: 100
+    random_state: 42 
+
+features:
+  [
+    step,
+    amount,
+    oldbalanceOrg,
+    newbalanceOrig,
+    oldbalanceDest,
+    newbalanceDest,
+    type_CASH_OUT,
+    type_DEBIT,
+    type_PAYMENT,
+    type_TRANSFER, 
+    isFraud
+  ]
+
+artefacts:
+  logistic_regression: models/logistic_regression_model.pkl
+  random_forest: models/random_forest_model.pkl
+  xgboost: models/xgboost_model.pkl
+  

@@ -1,0 +1,24 @@
+data: 
+  raw: data/raw/PS_20174392719_1491204439457_log.csv
+  interim : data/interim/fraud_clean.csv
+  target: isFraud
+
+  remouve_columns:
+    - isFlaggedFraud
+
+  processed:
+    train: data/processed/train.parquet
+    validation: data/processed/validation.parquet
+    test: data/processed/test.parquet
+  
+  preprocessing: models/onehot_encoder.pkl
+  
+  features:
+    engineered:
+      balance_change_orig:
+        formula: "oldbalanceOrg - newbalanceOrig"
+
+      balance_error_orig:
+        formula: "amount - balance_change_orig"
+
+ 
